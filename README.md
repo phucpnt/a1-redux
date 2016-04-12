@@ -1,6 +1,6 @@
 # a1-redux
 Angular 1.x with redux the right way.
 
-# TODO
+### TODO
 
-[ ] add unit test on browser. Using webpack to easy to deliver.
+* [ ] add unit test on browser. Using webpack to easy to deliver.
