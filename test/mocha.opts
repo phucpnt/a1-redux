@@ -1,0 +1,5 @@
+--recursive
+--ui bdd
+--compilers js:babel-register
+--timeout 5000
+--require ./test/helper.js
