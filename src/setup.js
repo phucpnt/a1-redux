@@ -1,4 +1,8 @@
-import createStore from 'redux';
+import {
+  createStore,
+  applyMiddleware,
+  compose,
+} from 'redux';
 
 const ActionTypes = {
   INIT: '@@redux/INIT'
@@ -15,59 +19,62 @@ function angularSetup(app) {
    */
   app.provider('ngStore', function () {
 
-    var state = {},
-        currentUpdater = function (action, currentState) {
-          return currentState;
-        },
-        dispatchLayers = [];
+    let state = {};
+    let currentUpdater = (action, currentState) => currentState;
+    let dispatchLayers = [];
 
 
-    this.putInitialState = function (initialState) {
+    this.putInitialState = initialState => {
       state = initialState;
     };
 
-    this.putUpdater = function (updater) {
+    this.putUpdater = updater => {
       currentUpdater = updater;
     };
 
     //noinspection JSPotentiallyInvalidUsageOfThis
-    this.putLayers = function (layers) {
+    this.putLayers = layers => {
       dispatchLayers = layers;
     };
 
-    this.$get = ['$timeout', function ($timeout) {
-      function digestAngularUI(store /*{getState, dispatch}*/) {
-        return function (nextLayer) {
-          return function (action) {
-            var result;
+    this.$get = ['$timeout',
+    function ($timeout) {
+        function digestAngularUI({getState, dispatch}) {
+          return (nextLayer) => (action) => {
+            let result;
             try {
               result = nextLayer(action);
             } catch (e) {
               console.error('DISPATCH ERROR >>> ', e);
             }
-            $timeout(function () { // update the UI on angular
-              return result;
-            });
+            $timeout(() => result); // update the UI on angular
             return result;
-          }
+          };
         }
-      }
 
-      var makeStore = createStore;
 
-      if(window.devToolsExtension){ // integrating 3rd party dev tools
-        makeStore = window.devToolsExtension()(createStore);
-      }
+        // if (window.devToolsExtension) { // integrating 3rd party dev tools
+        //   makeStore = window.devToolsExtension()(createStore);
+        // }
 
-      dispatchLayers.unshift(digestAngularUI);
+        dispatchLayers.unshift(digestAngularUI);
 
-      return applyDispatchLayers(dispatchLayers)(makeStore)(currentUpdater, state);
-    }];
+        const finalStore = createStore(currentUpdater, state, applyMiddleware(...dispatchLayers));
+
+        return finalStore;
+
+    },
+  ];
   });
 
 
   app.run(['ngStore', function (store) {
-    store.dispatch({type: ActionTypes.INIT});
+    store.dispatch({
+      type: ActionTypes.INIT
+    });
   }]);
 
+  return app;
 }
+
+export default angularSetup;

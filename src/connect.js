@@ -2,10 +2,11 @@ import {
   isArray,
   isFunction,
   extend,
+  forEach,
 } from 'angular';
 import invariant from 'invariant';
 
-export function connect({
+export default function connect({
   mapStateToScope,
   mapDispatchToScope,
 }, directiveDef) {
@@ -27,16 +28,25 @@ export function connect({
     invariant(isFunction(dirApi.link), 'directive link must be defined as a function');
 
     function wrappedLink($scope, $element, $attrs, ...more) {
-      let $nuScope = extend($scope, mapStateToScope(ngStore.getState()));
-      $nuScope = extend($nuScope, mapDispatchToScope(ngStore.dispatch, ngStore.getState()));
+      const $nuScope = $scope;
+
+      forEach(mapStateToScope(ngStore.getState), (val, key) => {
+        $nuScope[key] = val;
+      });
+
+      forEach(mapDispatchToScope(ngStore.dispatch, ngStore.getState), (val, key) => {
+        $nuScope[key] = val;
+      });
 
       return dirApi.link($nuScope, $element, $attrs, ...more);
     }
 
-    return extend(dirApi, {
+    return extend({}, dirApi, {
       link: wrappedLink,
     });
   };
 
-  return wrappedDirectiveDependency.concat(wrappedDirectiveFun);
+  const finalDirDef = wrappedDirectiveDependency.concat(wrappedDirectiveFun);
+
+  return finalDirDef;
 }
