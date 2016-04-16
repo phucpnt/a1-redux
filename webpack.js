@@ -35,7 +35,7 @@ var server = new WebpackDevServer(compiler, {
   contentBase: "/dev",
   // or: contentBase: "http://localhost/",
 
-  hot: true,
+  //hot: true, do not put the hot and then put the HotModuleReplacementPlugin same...
   inline: true,
   // Enable special support for Hot Module Replacement
   // Page is no longer updated, but a "webpackHotUpdate" message is send to the content

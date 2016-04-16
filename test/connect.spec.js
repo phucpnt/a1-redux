@@ -15,7 +15,7 @@ describe('Container Connect', () => {
   function testDirDef() {
     return {
       scope: {},
-      link: $scope => {
+      link($scope) {
         return $scope;
       },
       template: '<div>hello {{hello}}</div>',
@@ -25,11 +25,6 @@ describe('Container Connect', () => {
   beforeEach(() => {
     app = setup(angular.module('test', []));
   });
-
-  // beforeEach(inject((_$compile_, _$rootScope_) => {
-  //   $compile = _$compile_;
-  //   $rootScope = _$rootScope_;
-  // }));
 
   it('should support mapStateToScope', () => {
     const wrappedDirDef = connect({

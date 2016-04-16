@@ -3,4 +3,5 @@ Angular 1.x with redux the right way.
 
 ### TODO
 
-* [ ] add unit test on browser. Using webpack to easy to deliver.
+* [x] add unit test on browser. Using webpack to easy to deliver.
+* [ ] unit test for store.register and handle action.
