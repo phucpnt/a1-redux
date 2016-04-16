@@ -6,12 +6,19 @@ var compiler = webpack({
   // configuration
   devtool: 'source-map',
   entry: {
-    test: ["webpack-dev-server/client?http://localhost:8080/", "webpack/hot/dev-server", "./test"],
+    test: ['webpack-dev-server/client?http://localhost:8080/', 'webpack/hot/dev-server', './test'],
   },
   output: {
-    path: path.join(__dirname, "dist"),
-    filename: "[name].js"
+    path: path.join(__dirname, 'dist'),
+    filename: '[name].js',
   },
+  // resolve: {
+  //   resolve: {
+  //     alias: {
+  //       sinon: 'sinon/pkg/sinon',
+  //     },
+  //   },
+  // },
   module: {
     loaders: [
       {
@@ -22,11 +29,16 @@ var compiler = webpack({
         //   presets: ['es2015'],
         // },
       },
+      // {
+      //   test: /sinon.*\.js$/,
+      //   loader: 'imports?define=>false,require=>false',
+      // },
     ],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
   ],
+  // noParse: [/sinon/],
 });
 
 var server = new WebpackDevServer(compiler, {
