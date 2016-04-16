@@ -82,6 +82,25 @@ describe('Angular app setup', () => {
     expect(1).to.equal(1, 'no exception alone the way');
   });
 
+  it('should should allow initial state', (done) => {
+
+    app = setup(app);
+    app.config(['ngStoreProvider', ngStore => {
+      ngStore.setInitialState({
+        hello: 'world'
+      });
+      ngStore.setReducers(state => {
+        state.hello = state.hello + ' > ' + (new Date());
+        return state;
+      });
+    }]);
+    app.run(['ngStore', store => {
+      expect(store.getState().hello).to.contain('world');
+      done();
+    }]);
+    angularInject();
+  });
+
   it('should warn directive without propTypes', () => {
     const warning = sinon.spy(console, 'warn');
     app = setup(app);

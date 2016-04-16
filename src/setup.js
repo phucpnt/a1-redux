@@ -22,11 +22,11 @@ function angularSetup(app) {
     let dispatchLayers = [];
 
 
-    this.putInitialState = initialState => {
+    this.setInitialState = initialState => {
       state = initialState;
     };
 
-    this.putUpdater = updater => {
+    this.setReducers = this.putUpdaters = updater => {
       currentUpdater = updater;
     };
 
@@ -57,8 +57,7 @@ function angularSetup(app) {
         const finalStore = createStore(currentUpdater, state, applyMiddleware(...dispatchLayers));
 
         return finalStore;
-    },
-  ];
+    }];
   });
 
 
