@@ -14,10 +14,6 @@
   ],
   "author": "PhucPNT <mail@phucpnt.com>",
   "license": "ISC",
-  "peerDependencies": {
-    "angular": "1.x",
-    "redux": "*"
-  },
   "devDependencies": {
     "angular-mocks": "^1.5.3",
     "babel": "^6.5.2",
@@ -39,6 +35,7 @@
   },
   "dependencies": {
     "angular": "^1.5.3",
+    "proptypes": "^0.14.3",
     "redux": "^3.4.0"
   }
 }

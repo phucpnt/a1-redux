@@ -1,4 +1,5 @@
 --recursive
+-R spec
 --ui bdd
 --compilers js:babel-register
 --timeout 5000

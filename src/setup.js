@@ -1,11 +1,11 @@
 import {
   createStore,
   applyMiddleware,
-  compose,
 } from 'redux';
+import makePropTypesDirective from './directive-proptypes';
 
 const ActionTypes = {
-  INIT: '@@redux/INIT'
+  INIT: '@@redux/INIT',
 };
 
 /**
@@ -13,12 +13,10 @@ const ActionTypes = {
  * @param app {{angular}}
  */
 function angularSetup(app) {
-
   /**
    * understanding angular provider: https://www.evernote.com/shard/s16/sh/93652e36-4492-438d-94e3-86714b8ed49e/d885f65c9a74675c3d22cb4ff1d9df56
    */
-  app.provider('ngStore', function () {
-
+  app.provider('ngStore', function () { // because we need the context `this`
     let state = {};
     let currentUpdater = (action, currentState) => currentState;
     let dispatchLayers = [];
@@ -32,14 +30,16 @@ function angularSetup(app) {
       currentUpdater = updater;
     };
 
-    //noinspection JSPotentiallyInvalidUsageOfThis
     this.putLayers = layers => {
       dispatchLayers = layers;
     };
 
     this.$get = ['$timeout',
     function ($timeout) {
-        function digestAngularUI({getState, dispatch}) {
+        function digestAngularUI({
+          getState,
+          dispatch
+        }) {
           return (nextLayer) => (action) => {
             let result;
             try {
@@ -47,32 +47,28 @@ function angularSetup(app) {
             } catch (e) {
               console.error('DISPATCH ERROR >>> ', e);
             }
-            $timeout(() => result); // update the UI on angular
+            $timeout(() => result); // update the UI on angular, make sure changes in state will be in the $digest circle
             return result;
           };
         }
-
-
-        // if (window.devToolsExtension) { // integrating 3rd party dev tools
-        //   makeStore = window.devToolsExtension()(createStore);
-        // }
 
         dispatchLayers.unshift(digestAngularUI);
 
         const finalStore = createStore(currentUpdater, state, applyMiddleware(...dispatchLayers));
 
         return finalStore;
-
     },
   ];
   });
 
 
-  app.run(['ngStore', function (store) {
+  app.run(['ngStore', (store) => {
     store.dispatch({
-      type: ActionTypes.INIT
+      type: ActionTypes.INIT,
     });
   }]);
+
+  app.directive = makePropTypesDirective(app.directive.bind(app));
 
   return app;
 }
