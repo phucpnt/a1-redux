@@ -2,43 +2,29 @@ var WebpackDevServer = require("webpack-dev-server");
 var webpack = require("webpack");
 var path = require('path');
 
+var devPort = 8080;
 var compiler = webpack({
   // configuration
   devtool: 'source-map',
   entry: {
-    test: ['webpack-dev-server/client?http://localhost:8080/', 'webpack/hot/dev-server', './test'],
+    test: ['webpack-dev-server/client?http://localhost:' + devPort + '/', 'webpack/hot/dev-server', './test'],
   },
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
   },
-  // resolve: {
-  //   resolve: {
-  //     alias: {
-  //       sinon: 'sinon/pkg/sinon',
-  //     },
-  //   },
-  // },
   module: {
     loaders: [
       {
         test: /\.js?$/,
         exclude: /(node_modules|bower_components)/,
         loader: 'babel',
-        // query: {
-        //   presets: ['es2015'],
-        // },
       },
-      // {
-      //   test: /sinon.*\.js$/,
-      //   loader: 'imports?define=>false,require=>false',
-      // },
     ],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
   ],
-  // noParse: [/sinon/],
 });
 
 var server = new WebpackDevServer(compiler, {
@@ -85,5 +71,7 @@ var server = new WebpackDevServer(compiler, {
     colors: true
   },
 });
-server.listen(8080, "localhost", function () {});
-// server.close();
+
+server.listen(devPort, "localhost", function () {
+  console.log('Webpack start on port: ' + devPort);
+});

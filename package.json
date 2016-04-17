@@ -2,11 +2,14 @@
   "name": "a1-redux",
   "version": "0.0.1",
   "description": "Angular >=1.5 and redux",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha",
-    "start": "node webpack.js",
-    "build": "browserify ./src/index.js -s jserator -d -t [babelify] | exorcist dist/jserator.js.map > dist/jserator.js"
+    "start": "node webpack.dev.js",
+    "build:umd": "node webpack.build.js",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "build": "npm run build:umd && npm run build:commonjs",
+    "prepublish": "npm run build"
   },
   "keywords": [
     "angular",
@@ -24,6 +27,7 @@
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
     "chai": "^3.5.0",
+    "cross-env": "^1.0.7",
     "eslint": "^2.2.0",
     "eslint-config-airbnb": "^6.0.2",
     "exorcist": "^0.4.0",
