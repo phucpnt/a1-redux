@@ -4,8 +4,8 @@ Angular 1.x with redux the right way.
 ### TODO
 - [x] add unit test on browser.
 - [x] support register library with propTypes checking.
-- [ ] unit test for store.register and handle action.
-- [ ] container directive
+- [x] unit test for store.register and handle action.
+- [x] container directive
 - [ ] example todo
 
 ## How to use the library? Where is the document?
