@@ -5,6 +5,7 @@ import setup from '../src/setup';
 import connect from '../src/connect';
 import angular from 'angular';
 import 'angular-mocks';
+import sinon from 'sinon';
 
 describe('Container Connect', () => {
   let app;
@@ -21,14 +22,29 @@ describe('Container Connect', () => {
     };
   }
 
-  function angularInject() {
+  function testDirInteractDef() {
+    return {
+      scope: {},
+      link($scope) {
+        return $scope;
+      },
+      template: `
+      <div>
+        hello {{hello}}
+        <button ng-click="changeHello()">change hello</button>
+      </div>
+    `,
+    };
+  }
+
+  function angularInject(html = '<test-dir/>') {
     angular.mock.module('test');
     angular.mock.inject((_$compile_, _$rootScope_) => {
       $compile = _$compile_;
       $rootScope = _$rootScope_;
     });
     const $nuScope = $rootScope.$new(true);
-    const $element = $compile('<test-dir/>')($nuScope);
+    const $element = $compile(html)($nuScope);
     $nuScope.$digest();
     return $element;
   }
@@ -59,6 +75,7 @@ describe('Container Connect', () => {
     }, testDirDef);
 
     app.directive('testDir', containerDirFactory);
+    // add reducer
     app.config(['ngStoreProvider', (provider) => {
       provider.setReducers((state, action) => {
         switch (action.type) {
@@ -78,6 +95,8 @@ describe('Container Connect', () => {
     }]);
 
     const $element = angularInject();
+
+    // dispatch an action.
     storeExposed.dispatch({
       type: 'hello',
       hello: 'world delegated',
@@ -88,6 +107,43 @@ describe('Container Connect', () => {
       expect($element.html()).to.contain('world delegated');
       done();
     }, 100);
+  });
+
+  it('should support dispatch in container directive', () => {
+    const containerDirFactory = connect({
+      mapStateToScope: (getState) => ({
+        hello: getState().hello,
+      }),
+      mapDispatchToScope: (dispatch, getState) => ({
+        changeHello: () => {
+          return dispatch({
+            type: 'hello',
+            hello: 'hello dispatch'
+          });
+        }
+      }),
+    }, testDirInteractDef);
+
+    app.directive('testDir', containerDirFactory);
+    // add reducer
+    app.config(['ngStoreProvider', (provider) => {
+      provider.setReducers((state, action) => {
+        switch (action.type) {
+          case 'hello':
+            let nuState = state;
+            nuState.hello = action.hello;
+            return nuState;
+          default:
+            return state;
+        }
+      });
+    }]);
+
+    const $element = angularInject();
+    expect($element.html()).not.to.contain('hello dispatch');
+
+    $element.find('button')[0].click();
+    expect($element.html()).to.contain('hello dispatch');
   });
 
 });

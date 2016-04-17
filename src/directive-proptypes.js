@@ -27,7 +27,7 @@ function makeDirectiveApiSuggested(aDirectiveRegisterFun) {
 
       if (!dirDef._propTypes_) {
         console.warn(`directive **${name}** not having _propTypes_ defined.
-Defining the _api_ allow developer easy to understand which data should provide to to directive`);
+Defining the _propTypes_ allow developer easy to understand which data should provide to to directive`);
       }
 
       const dirLinkFun = dirDef.link;
