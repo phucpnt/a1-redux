@@ -16,7 +16,7 @@
     "redux"
   ],
   "author": "PhucPNT <mail@phucpnt.com>",
-  "license": "Apache2.0",
+  "license": "BSD",
   "devDependencies": {
     "angular-mocks": "^1.5.3",
     "babel": "^6.5.2",
