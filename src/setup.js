@@ -36,10 +36,7 @@ function angularSetup(app) {
 
     this.$get = ['$timeout',
     function ($timeout) {
-        function digestAngularUI({
-          getState,
-          dispatch
-        }) {
+        function digestAngularUI() {
           return (nextLayer) => (action) => {
             let result;
             try {
