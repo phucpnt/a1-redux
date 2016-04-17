@@ -6,6 +6,7 @@ Angular 1.x with redux the right way.
 - [x] support register library with propTypes checking.
 - [ ] unit test for store.register and handle action.
 - [ ] container directive
+- [ ] example todo
 
 ## How to use the library? Where is the document?
 For now, please check the unit test in the `test` directory.

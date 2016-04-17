@@ -18,7 +18,7 @@ function angularSetup(app) {
    */
   app.provider('ngStore', function () { // because we need the context `this`
     let state = {};
-    let currentUpdater = (action, currentState) => currentState;
+    let currentUpdater = currentState => currentState;
     let dispatchLayers = [];
 
 
@@ -44,7 +44,9 @@ function angularSetup(app) {
             } catch (e) {
               console.error('DISPATCH ERROR >>> ', e);
             }
-            $timeout(() => result); // update the UI on angular, make sure changes in state will be in the $digest circle
+
+            // update the UI on angular, make sure changes in state will be in the $digest circle
+            $timeout(() => result);
             return result;
           };
         }

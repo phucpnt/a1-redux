@@ -30,9 +30,15 @@ export default function connect({
     function wrappedLink($scope, $element, $attrs, ...more) {
       const $nuScope = $scope;
 
-      forEach(mapStateToScope(ngStore.getState), (val, key) => {
-        $nuScope[key] = val;
-      });
+      function mapState() {
+        forEach(mapStateToScope(ngStore.getState), (val, key) => {
+          $nuScope[key] = val;
+        });
+      }
+
+      const unsubscribe = ngStore.subscribe(mapState);
+      $nuScope.$on('$destroy', unsubscribe);
+      mapState();
 
       forEach(mapDispatchToScope(ngStore.dispatch, ngStore.getState), (val, key) => {
         $nuScope[key] = val;

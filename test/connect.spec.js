@@ -28,7 +28,7 @@ describe('Container Connect', () => {
       $rootScope = _$rootScope_;
     });
     const $nuScope = $rootScope.$new(true);
-    const $element = $compile('<dir-test/>')($nuScope);
+    const $element = $compile('<test-dir/>')($nuScope);
     $nuScope.$digest();
     return $element;
   }
@@ -44,10 +44,50 @@ describe('Container Connect', () => {
       }),
       mapDispatchToScope: () => {},
     }, testDirDef);
-    app.directive('dirTest', wrappedDirDef);
+    app.directive('testDir', wrappedDirDef);
 
     const $element = angularInject();
     expect($element.html()).to.contain('hello world');
+  });
+
+  it('should delegate state change in store', (done) => {
+    const containerDirFactory = connect({
+      mapStateToScope: (getState) => ({
+        hello: getState().hello,
+      }),
+      mapDispatchToScope: () => {},
+    }, testDirDef);
+
+    app.directive('testDir', containerDirFactory);
+    app.config(['ngStoreProvider', (provider) => {
+      provider.setReducers((state, action) => {
+        switch (action.type) {
+          case 'hello':
+            let nuState = state;
+            nuState.hello = action.hello;
+            return nuState;
+          default:
+            return state;
+        }
+      });
+    }]);
+
+    let storeExposed;
+    app.run(['ngStore', (store) => {
+      storeExposed = store;
+    }]);
+
+    const $element = angularInject();
+    storeExposed.dispatch({
+      type: 'hello',
+      hello: 'world delegated',
+    });
+    angular.element($element).scope().$digest();
+
+    window.setTimeout(() => {
+      expect($element.html()).to.contain('world delegated');
+      done();
+    }, 100);
   });
 
 });
