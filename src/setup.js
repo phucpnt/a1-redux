@@ -3,6 +3,7 @@ import {
   applyMiddleware,
 } from 'redux';
 import makePropTypesDirective from './directive-proptypes';
+import thunk from 'redux-thunk';
 
 const ActionTypes = {
   INIT: '@@redux/INIT',
@@ -19,7 +20,7 @@ function angularSetup(app) {
   app.provider('ngStore', function () { // because we need the context `this`
     let state = {};
     let currentUpdater = currentState => currentState;
-    let dispatchLayers = [];
+    let dispatchLayers = [thunk];
 
 
     this.setInitialState = initialState => {
