@@ -1,8 +1,6 @@
 import {
-  isFunction
+    isFunction,
 } from 'angular';
-
-import PropTypes from 'proptypes';
 
 function check(props, propTypes, name) {
   for (let prop in propTypes) {
@@ -17,6 +15,16 @@ function check(props, propTypes, name) {
   return true;
 }
 
+function applyDefaultProps($scope, defaultProps) {
+  const $nuScope = $scope;
+  for (let key in defaultProps) {
+    if (typeof $scope[key] === 'undefined') {
+      $nuScope[key] = defaultProps[key];
+    }
+  }
+  return $nuScope;
+}
+
 function makeDirectiveApiSuggested(aDirectiveRegisterFun) {
   return (name, directiveFactory) => {
     const directiveFun = isFunction(directiveFactory) ? directiveFactory : directiveFactory.slice(-1)[0];
@@ -26,22 +34,27 @@ function makeDirectiveApiSuggested(aDirectiveRegisterFun) {
       const dirDef = directiveFun(...args);
 
       if (!dirDef._propTypes_) {
-        console.warn(`directive **${name}** not having _propTypes_ defined.
+        console.warn(`directive ** ${name} ** not having _propTypes_ defined.
 Defining the _propTypes_ allow developer easy to understand which data should provide to to directive`);
       }
 
       const dirLinkFun = dirDef.link;
 
       function wrappedDirLinkFun($scope, ...more) {
-        if (check($scope, dirDef._propTypes_, name)) {
-          return dirLinkFun($scope, ...more);
+        let $nuScope = $scope;
+        if (typeof dirDef._getDefaultProps_ === 'function') {
+          $nuScope = applyDefaultProps($nuScope, dirDef._getDefaultProps_());
+        }
+        if (check($nuScope, dirDef._propTypes_, name)) {
+          return dirLinkFun($nuScope, ...more);
         }
         throw new Error(`properties of directive **${name}** is not provided correctly!`);
       }
+
       dirDef.link = wrappedDirLinkFun;
       dirDef.scope = dirDef.scope || {}; // make the scope isolate
 
-      for(let key in dirDef._propTypes_){
+      for (let key in dirDef._propTypes_) {
         dirDef.scope[key] = '<?'; // 1 one binding data.
       }
 

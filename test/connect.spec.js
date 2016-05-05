@@ -1,5 +1,5 @@
 import {
-  expect
+    expect
 } from 'chai';
 import setup from '../src/setup';
 import connect from '../src/connect';
@@ -58,7 +58,8 @@ describe('Container Connect', () => {
       mapStateToScope: () => ({
         hello: 'world',
       }),
-      mapDispatchToScope: () => {},
+      mapDispatchToScope: () => {
+      },
     }, testDirDef);
     app.directive('testDir', wrappedDirDef);
 
@@ -71,7 +72,8 @@ describe('Container Connect', () => {
       mapStateToScope: (getState) => ({
         hello: getState().hello,
       }),
-      mapDispatchToScope: () => {},
+      mapDispatchToScope: () => {
+      },
     }, testDirDef);
 
     app.directive('testDir', containerDirFactory);
@@ -118,9 +120,9 @@ describe('Container Connect', () => {
         changeHello: () => {
           return dispatch({
             type: 'hello',
-            hello: 'hello dispatch'
+            hello: 'hello dispatch',
           });
-        }
+        },
       }),
     }, testDirInteractDef);
 
@@ -130,7 +132,7 @@ describe('Container Connect', () => {
       provider.setReducers((state, action) => {
         switch (action.type) {
           case 'hello':
-            let nuState = state;
+            const nuState = state;
             nuState.hello = action.hello;
             return nuState;
           default:

@@ -2,7 +2,7 @@ var WebpackDevServer = require("webpack-dev-server");
 var webpack = require("webpack");
 var path = require('path');
 
-var devPort = 8080;
+var devPort = 8181;
 var compiler = webpack({
   // configuration
   devtool: 'source-map',

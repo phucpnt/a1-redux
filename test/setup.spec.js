@@ -1,5 +1,5 @@
 import {
-  expect
+    expect
 } from 'chai';
 import sinon from 'sinon';
 import PropTypes from 'proptypes';
@@ -46,6 +46,27 @@ describe('Angular app setup', () => {
       },
       template: '<div>hello {{hello}}</div>',
     };
+  }
+
+  function testDirDefWithDefaultProps() {
+    return {
+      _propTypes_: {
+        hello: PropTypes.string,
+      },
+      _getDefaultProps_() {
+        return {
+          hello: 'world default',
+        };
+      },
+      scope: {
+        hello: '=',
+      },
+      link($scope) {
+        return $scope;
+      },
+      template: '<div>hello {{hello}}</div>',
+
+    }
   }
 
   let initInject = false;
@@ -133,5 +154,12 @@ describe('Angular app setup', () => {
 
     expect(angularInject.bind(null, '<test-dir hello="world"/>')).not.to.throw(Error);
     warning.restore();
+  });
+
+  it('should support directive with defaultProps', () => {
+    app = setup(app);
+    app.directive('testDir', testDirDefWithDefaultProps);
+    const $el = angularInject();
+    expect($el.html()).to.contain('hello world default');
   });
 });
