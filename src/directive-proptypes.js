@@ -42,7 +42,7 @@ Defining the _propTypes_ allow developer easy to understand which data should pr
       dirDef.scope = dirDef.scope || {}; // make the scope isolate
 
       for(let key in dirDef._propTypes_){
-        dirDef.scope[key] = '@'; // 1 one binding data.
+        dirDef.scope[key] = '<?'; // 1 one binding data.
       }
 
       return dirDef;
