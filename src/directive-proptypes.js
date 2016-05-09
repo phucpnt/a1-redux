@@ -25,13 +25,14 @@ function applyDefaultProps($scope, defaultProps) {
   return $nuScope;
 }
 
-function makeDirectiveApiSuggested(aDirectiveRegisterFun) {
-  return (name, directiveFactory) => {
+function makeDirectiveApiSuggested(app) {
+  const aDirectiveRegisterFun = app.directive.bind(app);
+  app.directive = (name, directiveFactory) => {
     const directiveFun = isFunction(directiveFactory) ? directiveFactory : directiveFactory.slice(-1)[0];
     const finalDirectiveFactory = [].concat(directiveFactory);
 
-    function wrappedDirFun(...args) {
-      const dirDef = directiveFun(...args);
+    function wrappedDirFun() {
+      const dirDef = directiveFun.apply(null, arguments);
 
       if (!dirDef._propTypes_) {
         console.warn(`directive ** ${name} ** not having _propTypes_ defined.
@@ -65,6 +66,7 @@ Defining the _propTypes_ allow developer easy to understand which data should pr
 
     return aDirectiveRegisterFun(name, finalDirectiveFactory);
   };
+  return app;
 }
 
 export default makeDirectiveApiSuggested;

@@ -68,6 +68,7 @@ describe('Angular app setup', () => {
 
     }
   }
+  
 
   let initInject = false;
 
@@ -162,4 +163,25 @@ describe('Angular app setup', () => {
     const $el = angularInject();
     expect($el.html()).to.contain('hello world default');
   });
+  
+  it('should support service on directive declaration', () => {
+    app = setup(app);
+    const spyService = sinon.spy();
+    app.factory('spyService', () =>{
+      return spyService;
+    });
+    
+    app.directive('testDir', ['spyService', '$timeout', (spyService, timeout) => {
+      spyService();
+      timeout();
+      return {
+        link: () => {},
+        template: '<div>hello</div>',
+      };
+    }]);
+    
+    angularInject();
+    expect(spyService.called).to.be.true;
+    
+  })
 });

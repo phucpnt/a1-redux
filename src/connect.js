@@ -17,7 +17,7 @@ export default function connect({
 
   const directiveFun = isFunction(directiveDef) ? directiveDef : directiveDef[directiveDef.length - 1];
   const directiveDependency = isArray(directiveDef) && directiveDef.length >= 2 ?
-      directiveDef.slice(0, directiveDef.length - 2) : [];
+      directiveDef.slice(0, directiveDef.length - 1) : [];
 
   const wrappedDirectiveDependency = directiveDependency.concat('ngStore');
 

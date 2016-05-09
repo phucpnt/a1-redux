@@ -66,8 +66,8 @@ function angularSetup(app) {
       type: ActionTypes.INIT,
     });
   }]);
-
-  app.directive = makePropTypesDirective(app.directive.bind(app));
+  
+  makePropTypesDirective(app);
 
   return app;
 }

@@ -148,4 +148,50 @@ describe('Container Connect', () => {
     expect($element.html()).to.contain('hello dispatch');
   });
 
+  it('should support injecting angular service', () => {
+    const containerDirFactory = connect({
+      mapStateToScope: (getState) => ({
+        hello: getState().hello,
+      }),
+      mapDispatchToScope: (dispatch, getState) => ({
+        changeHello: () => {
+          return dispatch({
+            type: 'hello',
+            hello: 'hello dispatch',
+          });
+        },
+      }),
+    }, ['spyService', (spyService, store) => {
+      spyService();
+      console.log(store);
+      return testDirInteractDef();
+    }]);
+    const spyService = sinon.spy();
+
+    app.directive('testDir', containerDirFactory);
+    app.service('spyService', () => {
+      return spyService;
+    })
+    // add reducer
+    app.config(['ngStoreProvider', (provider) => {
+      provider.setReducers((state, action) => {
+        switch (action.type) {
+          case 'hello':
+            const nuState = state;
+            nuState.hello = action.hello;
+            return nuState;
+          default:
+            return state;
+        }
+      });
+    }]);
+
+    const $element = angularInject();
+    expect($element.html()).not.to.contain('hello dispatch');
+
+    $element.find('button')[0].click();
+    expect($element.html()).to.contain('hello dispatch');
+    expect(spyService.called).to.be.true;
+  });
+
 });
